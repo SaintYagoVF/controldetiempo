@@ -9,7 +9,7 @@
     android:icon="@drawable/ic_inicio"
     />
 
-    <item android:id="@+id/pedidos"
+    <item android:id="@+id/perfil"
         android:title="Mi Perfil"
         android:icon="@drawable/ic_user"/>
 
