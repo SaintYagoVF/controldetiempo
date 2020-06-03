@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuCorreo"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/menuTitulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="35dp"
+        android:text="BIENVENIDO/A A"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/menuTitulo2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="35dp"
+        android:text="CONTROL DE TIEMPO"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/menuUsuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="10dp"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textColor="@color/negro"
+        android:textStyle="bold" />
+
+</LinearLayout>

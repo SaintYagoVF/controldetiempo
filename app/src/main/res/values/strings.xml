@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Control de Tiempo</string>
+
+
+    <string name="abrir">Abrir</string>
+    <string name="cerrar">Cerrar</string>
 </resources>

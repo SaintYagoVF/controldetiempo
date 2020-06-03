@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+<item android:id="@+id/inicio"
+
+    android:title="Inicio"
+    android:icon="@drawable/ic_inicio"
+    />
+
+    <item android:id="@+id/pedidos"
+        android:title="Mi Perfil"
+        android:icon="@drawable/ic_user"/>
+
+
+
+    <item android:id="@+id/logout"
+        android:title="Cerrar Sesión"
+        android:icon="@drawable/ic_logout"/>
+
+</menu>
