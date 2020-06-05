@@ -9,16 +9,36 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Button btnGenerate;
+    private ImageView imgResult;
+    public Bitmap qrImage;
+    private ProgressBar loader;
 
     //MENU
     private ViewPager mViewPager;
@@ -42,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        btnGenerate = (Button)findViewById(R.id.btnGenerarqr);
+
+        imgResult   = (ImageView)findViewById(R.id.imageViewQR);
 
         //SharedPreferences
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -81,6 +104,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         setupNavigationDrawerContent(navigationView);
+
+        btnGenerate.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    v.getBackground().setAlpha(150);
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    v.getBackground().setAlpha(255);
+                }
+                return false;
+            }
+        });
+
+        btnGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                generarImagen();
+
+            }
+        });
 
 
 
@@ -201,5 +245,94 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private void generarImagen(){
+
+        String cedula=sharedpreferences.getString(Id,"");
+
+
+
+        //final String text = txtQRText.getText().toString();
+        Long time= System.currentTimeMillis();
+        final String text =cedula+"@"+time.toString();
+      /*  if(text.trim().isEmpty()){
+            alert("Ketik dulu data yang ingin dibuat QR Code");
+            return;
+        }
+        */
+
+
+        endEditing();
+        showLoadingVisible(true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int size = imgResult.getMeasuredWidth();
+                if( size > 1){
+                   // Log.e(tag, "size is set manually");
+                    size = 260;
+                }
+
+                Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
+                hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+                hintMap.put(EncodeHintType.MARGIN, 1);
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                try {
+                    BitMatrix byteMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, size,
+                            size, hintMap);
+                    int height = byteMatrix.getHeight();
+                    int width = byteMatrix.getWidth();
+                   qrImage = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                    for (int x = 0; x < width; x++){
+                        for (int y = 0; y < height; y++){
+                            qrImage.setPixel(x, y, byteMatrix.get(x,y) ? Color.BLACK : Color.WHITE);
+                        }
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showImage(qrImage);
+                            showLoadingVisible(false);
+                            //this.snackbar("QRCode telah dibuat");
+                        }
+                    });
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                   Log.d("ErrorMain",e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    private void showLoadingVisible(boolean visible){
+        if(visible){
+            showImage(null);
+        }
+
+       /* loader.setVisibility(
+                (visible) ? View.VISIBLE : View.GONE
+        );
+        */
+
+    }
+
+    public void showImage(Bitmap bitmap) {
+        if (bitmap == null) {
+            imgResult.setImageResource(android.R.color.transparent);
+            qrImage = null;
+            //txtSaveHint.setVisibility(View.GONE);
+        } else {
+            imgResult.setImageBitmap(bitmap);
+            //txtSaveHint.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void endEditing(){
+        //txtQRText.clearFocus();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.
+                INPUT_METHOD_SERVICE);
+        // imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 }
