@@ -29,8 +29,19 @@
             android:id="@+id/btnGenerarqr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="50dp"
+            android:layout_margin="25dp"
             android:text="GENERAR QR" />
+
+
+
+        <Button
+            android:id="@+id/btnIngresarCodigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="25dp"
+            android:text="INGRESAR CÓDIGO" />
 
         <ImageView
             android:id="@+id/imageViewQR"

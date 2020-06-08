@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="320dp"
+
+    android:layout_gravity="center"
+    android:background="@color/fondo"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnPopupEmpCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:contentDescription="TODO"
+            app:srcCompat="@android:drawable/btn_dialog" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="INGRESE EL CÓDIGO"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/negro"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/filtroCodigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="50dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint=""
+            android:inputType="number"
+            android:textColor="@color/negro"
+            android:textColorHint="@color/negro" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPopupEmpAceptar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:clickable="true"
+            android:text="ACEPTAR" />
+
+    </LinearLayout>
+</LinearLayout>

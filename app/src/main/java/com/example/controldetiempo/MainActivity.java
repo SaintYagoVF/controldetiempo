@@ -1,16 +1,19 @@
 package com.example.controldetiempo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,27 +21,45 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnGenerate;
+    private Button btnGenerate, btnIngresarCodigo;
     private ImageView imgResult;
     public Bitmap qrImage;
     private ProgressBar loader;
+
+    private static final String TAG="MainActivity";
+    private static final String KEY_LOGIN="login";
+    private static final String KEY_OTP="otp";
+
+
+    private static final String KEY_CEDULA="cedula";
+    private static final String KEY_FECHA="fecha";
 
     //MENU
     private ViewPager mViewPager;
@@ -49,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tituloPas;
     TextView usuarioPas;
+
+    //Popup
+
+    Dialog myDialog;
+
+    //Firebase
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     //SharedPreference
 
@@ -64,10 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
         btnGenerate = (Button)findViewById(R.id.btnGenerarqr);
 
+        btnIngresarCodigo=(Button)findViewById(R.id.btnIngresarCodigo);
+
         imgResult   = (ImageView)findViewById(R.id.imageViewQR);
 
         //SharedPreferences
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        //Popup
+        myDialog = new Dialog(this);
 
         //MENU
 
@@ -125,6 +158,27 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        btnIngresarCodigo.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    v.getBackground().setAlpha(150);
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    v.getBackground().setAlpha(255);
+                }
+                return false;
+            }
+        });
+
+        btnIngresarCodigo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ingresarCodigo();
+            }
+        });
+
+
 
 
 
@@ -249,6 +303,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void generarImagen(){
 
+        btnGenerate.setText("VOLVER A GENERAR QR");
         String cedula=sharedpreferences.getString(Id,"");
 
 
@@ -334,5 +389,182 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.
                 INPUT_METHOD_SERVICE);
         // imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+
+
+    private void ingresarCodigo(){
+
+
+        Toast.makeText(MainActivity.this, "Ingrese el código de la Tablet", Toast.LENGTH_SHORT).show();
+
+
+        Button btnAceptarPopupEmp;
+        ImageButton btnCancelarPopupEmp;
+
+        final EditText filtroCodigo;
+
+        myDialog.setContentView(R.layout.popup_codigo);
+
+
+        btnAceptarPopupEmp = (Button)myDialog.findViewById(R.id.btnPopupEmpAceptar);
+        btnCancelarPopupEmp = (ImageButton)myDialog.findViewById(R.id.btnPopupEmpCancelar);
+        filtroCodigo=(EditText)myDialog.findViewById(R.id.filtroCodigo);
+
+        btnAceptarPopupEmp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    v.getBackground().setAlpha(150);
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    v.getBackground().setAlpha(255);
+                }
+                return false;
+            }
+        });
+
+        btnCancelarPopupEmp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    v.getBackground().setAlpha(150);
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    v.getBackground().setAlpha(255);
+                }
+                return false;
+            }
+        });
+
+        btnCancelarPopupEmp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+
+        btnAceptarPopupEmp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String codigoIngresado=filtroCodigo.getText().toString();
+
+                final String cedula=sharedpreferences.getString(Id,"");
+
+                db.collection("Usuario").document(cedula).get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                if(documentSnapshot.exists()){
+
+                                    //Map<String,Object> usuario=documentSnapshot.getData();
+
+                                    String otp_firebase=documentSnapshot.getString(KEY_OTP);
+
+                                    if(otp_firebase.equals(codigoIngresado)){
+
+
+                                        db.collection("Usuario").document(cedula).update(KEY_LOGIN, true)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+
+                                                        registroAsistencia();
+
+
+                                                        myDialog.dismiss();
+
+
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+
+                                                        Toast.makeText(MainActivity.this,"Error al registrar asistencia, verifique su conexión a Internet",Toast.LENGTH_LONG).show();
+                                                        Log.d(TAG,e.toString());
+
+                                                    }
+                                                });
+
+
+                                    }else{
+                                        Toast.makeText(MainActivity.this,"El código es Incorrecto",Toast.LENGTH_LONG).show();
+
+                                    }
+
+                                }
+                                else{
+
+                                    Toast.makeText(MainActivity.this,"Error, verifique su conexión a Internet",Toast.LENGTH_LONG).show();
+
+
+                                }
+
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this,"Error: Verifique su conexión a Internet",Toast.LENGTH_LONG).show();
+                                Log.d(TAG,e.toString());
+
+                            }
+                        });
+
+
+
+
+
+
+            }
+        });
+
+
+
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
+    }
+
+
+    public void registroAsistencia(){
+
+        Date currentTime = Calendar.getInstance().getTime();
+        Long time= System.currentTimeMillis();
+
+        String idRegistro=time.toString();
+
+        final  Map<String,Object> usuario=new HashMap<>();
+
+        String cedula=sharedpreferences.getString(Id,"");
+
+        usuario.put(KEY_CEDULA,cedula);
+        usuario.put(KEY_FECHA,currentTime);
+
+
+
+
+
+        db.collection("Registro").document(idRegistro).set(usuario)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(MainActivity.this,"¡Asistencia Registrada!: ",Toast.LENGTH_LONG).show();
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(MainActivity.this,"Error al registrar asistencia",Toast.LENGTH_LONG).show();
+                        Log.d(TAG,e.toString());
+
+                    }
+                });
+
     }
 }
