@@ -528,7 +528,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void registroAsistencia(){
+    private void registroAsistencia(){
 
         Date currentTime = Calendar.getInstance().getTime();
         Long time= System.currentTimeMillis();

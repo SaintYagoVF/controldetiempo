@@ -16,10 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,23 +33,29 @@ public class LoginActivity extends AppCompatActivity {
 
     //FIRESTORE
     private static final String TAG="LoginActivity";
-    private static final String KEY_EMAIL="email";
+    private static final String KEY_TOKEN="token";
     private static final String KEY_CLAVE="clave";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     //SharedPreference
     public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String Token = "tokenKey";
     public static final String Id = "idKey";
     SharedPreferences sharedpreferences;
 
     //ProgressDialog
     private ProgressDialog pDialog;
 
+    //TokenFirebase
+    private static String tokenFirebase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //TokenFirebase
+        iniciarFirebase();
 
         btnLoginUsuario=(Button)findViewById(R.id.btnLoginUsuario);
         btnRegistroUsuario=(Button)findViewById(R.id.btnRegistroUsuario);
@@ -185,6 +195,25 @@ public class LoginActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
+                                try {
+
+
+                                    SharedPreferences.Editor editor = sharedpreferences.edit();
+
+                                    editor.putString(Token,tokenFirebase);
+
+                                    editor.commit();
+
+                                    actualizarToken();
+
+
+
+                                } catch (Exception e) {
+
+
+                                    e.printStackTrace();
+                                }
+
                                 hideDialog();
 
                                 Toast.makeText(LoginActivity.this,"¡Bienvenido a Control de Tiempo!",Toast.LENGTH_LONG).show();
@@ -238,5 +267,52 @@ public class LoginActivity extends AppCompatActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void iniciarFirebase(){
+
+
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        tokenFirebase=token;
+
+                        // Log and toast
+                        //String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d(TAG,"Token de dispositivo es: "+ tokenFirebase);
+                        //Toast.makeText(LoginActivity.this, tokenFirebase, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+    }
+
+    private void actualizarToken(){
+        db.collection("Usuario").document(txtCedulaUsuario.getText().toString()).update(KEY_TOKEN, tokenFirebase)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                       // Toast.makeText(LoginActivity.this,"Error al registrar asistencia, verifique su conexión a Internet",Toast.LENGTH_LONG).show();
+                        Log.d(TAG,e.toString());
+
+                    }
+                });
     }
 }

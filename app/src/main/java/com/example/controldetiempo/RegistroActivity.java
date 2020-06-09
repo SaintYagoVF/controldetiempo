@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.util.Log;
@@ -16,11 +17,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,22 +40,30 @@ public class RegistroActivity extends AppCompatActivity {
     private static final String KEY_EMAIL="email";
     private static final String KEY_CEDULA="cedula";
     private static final String KEY_CLAVE="clave";
+    private static final String KEY_TOKEN="token";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     //Shared
     //SharedPreference
     public static final String MyPREFERENCES = "MyPrefs" ;
     public static final String Rol = "rolKey";
+    public static final String Token = "tokenKey";
     public static final String Id = "idKey";
     SharedPreferences sharedpreferences;
 
     //ProgressDialog
     private ProgressDialog pDialog;
 
+    //TokenFirebase
+    private static String tokenFirebase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
+
+        //TokenFirebase
+        iniciarFirebase();
 
 
         //SharedPreferences
@@ -138,6 +151,7 @@ public class RegistroActivity extends AppCompatActivity {
         usuario.put(KEY_EMAIL,email);
         usuario.put(KEY_CEDULA,cedula);
         usuario.put(KEY_CLAVE,clave);
+        usuario.put(KEY_TOKEN,tokenFirebase);
 
         //db.document("Usuarios/"+email);
 
@@ -188,6 +202,22 @@ public class RegistroActivity extends AppCompatActivity {
                                                 SharedPreferences.Editor editor = sharedpreferences.edit();
 
                                                 editor.putString(Id,txtCedula.getText().toString());
+
+                                                editor.commit();
+
+
+
+                                            } catch (Exception e) {
+
+
+                                                e.printStackTrace();
+                                            }
+                                            try {
+
+
+                                                SharedPreferences.Editor editor = sharedpreferences.edit();
+
+                                                editor.putString(Token,tokenFirebase);
 
                                                 editor.commit();
 
@@ -249,5 +279,31 @@ public class RegistroActivity extends AppCompatActivity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void iniciarFirebase(){
+
+
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        tokenFirebase=token;
+
+                        // Log and toast
+                        //String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d(TAG,"Token de dispositivo es: "+ tokenFirebase);
+                        //Toast.makeText(LoginActivity.this, tokenFirebase, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondo"
+    android:orientation="vertical"
+    tools:context=".ConfirmacionActivity">
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:gravity="center_horizontal"
+        android:inputType="textMultiLine"
+        android:text="CONFIRMACIÓN DE ASISTENCIA"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:gravity="center_horizontal"
+        android:inputType="textMultiLine"
+        android:text="Presione la casilla de confirmación y haga click en el botón Aceptar, para registrarse."
+        android:textSize="24sp"
+        android:textStyle="normal"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxConfirmacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="25dp"
+        android:textSize="24sp"
+        android:text="Confirmo Mi Asistencia" />
+
+    <Button
+        android:id="@+id/btnConfirmacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtloginClave"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp"
+
+        android:layout_marginRight="40dp"
+        android:background="@color/colorPrimary"
+        android:text="Aceptar"
+        android:textColor="@color/darkgray"
+        android:textSize="16dp" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
