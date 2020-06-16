@@ -217,13 +217,14 @@ public class MainActivity extends AppCompatActivity {
                         switch (menuItem.getItemId()) {
                             case R.id.inicio:
                                 menuItem.setChecked(true);
-
                                 Toast.makeText(MainActivity.this, "Pantalla: " + menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
                                 mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                              /*
                                 Intent intent = new Intent(MainActivity.this, MainActivity.class);
                                 //intent.putExtras(basket);
                                 startActivity(intent);
-
+                            */
 
 
                                 return true;
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 Toast.makeText(MainActivity.this, "Pantalla: " + menuItem.getTitle().toString(), Toast.LENGTH_SHORT).show();
                                 mDrawerLayout.closeDrawer(GravityCompat.START);
-                                Intent intent2 = new Intent(MainActivity.this, MainActivity.class);
+                                Intent intent2 = new Intent(MainActivity.this, PerfilActivity.class);
                                 //intent.putExtras(basket);
                                 startActivity(intent2);
 

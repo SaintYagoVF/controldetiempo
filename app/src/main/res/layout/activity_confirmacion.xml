@@ -4,9 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".ConfirmacionActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:text="Sistema de Control de Asistencias"
+            android:textSize="23dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView13"
@@ -48,7 +66,7 @@
         android:layout_marginTop="20dp"
 
         android:layout_marginRight="40dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:text="Aceptar"
         android:textColor="@color/darkgray"
         android:textSize="16dp" />

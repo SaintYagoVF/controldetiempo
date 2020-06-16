@@ -4,31 +4,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     tools:context=".RegistroActivity">
 
-
-    <TextView
-        android:id="@+id/textView4"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Registro de Usuarios"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18sp" />
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+            app:srcCompat="@drawable/dilipalogo" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:text="Sistema de Control de Asistencias"
+            android:textSize="23dp" />
+    </LinearLayout>
+
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text='¡Hola! Ingrese los campos solicitados y oprima el botón "Aceptar" para registrarse en la plataforma.'
+        android:layout_marginTop="20dp"
+        android:text="REGISTRO"
         android:textAlignment="center"
         android:layout_gravity="center"
-        android:textColor="@color/colorPrimary"
-        android:textSize="14sp" />
+        android:textColor="@android:color/holo_orange_dark" />
 
     <EditText
         android:id="@+id/txtUsuarioRegistro"
@@ -135,10 +149,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtSexo"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
 
         android:layout_marginRight="20dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:text="ACEPTAR"
         android:textColor="@color/darkgray"
         android:textSize="16dp" />

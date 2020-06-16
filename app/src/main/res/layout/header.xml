@@ -3,7 +3,7 @@
     android:id="@+id/menuCorreo"
     android:layout_width="match_parent"
     android:layout_height="160dp"
-    android:background="@drawable/background"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     android:padding="20dp">
 
